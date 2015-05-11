@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -27,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+
 
 public class MainActivity extends FragmentActivity {
 
@@ -45,24 +47,23 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+	
+		la.clear();
+		ln.clear();
+		Log.d("Log",la.size()+" "+ln.size());
 
 		mMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
+		
 
 		btnClear = (Button) findViewById(R.id.btnClear);
 		btnClear.bringToFront();
 		btnClear.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mMap.clear();
-				la.clear();
-				ln.clear();
-				Toast.makeText(MainActivity.this, "Clear all mark",
-						Toast.LENGTH_SHORT).show();
-				
-				onResume();
-				new ProgressTask2().execute();
-
+				for(int i = 0; i < la.size(); i++){
+					Log.d("Log","Lat: "+la.get(i)+" Lng: "+ln.get(i));
+				}
 			}
 		});
 
@@ -74,8 +75,14 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				startActivity(intent);
+				if(la.size() <= 1){
+					Toast toast = Toast.makeText(MainActivity.this, "Pls select destination", Toast.LENGTH_SHORT);
+					toast.show();
+				}else{
+					startActivity(intent);
+				}
 			}
+
 		});
 
 		new ProgressTask().execute();
@@ -85,11 +92,9 @@ public class MainActivity extends FragmentActivity {
 		mMap.setOnMapClickListener(new OnMapClickListener() {
 			public void onMapClick(LatLng arg) {
 
-				if (la.size() <= 1 || ln.size() <= 1) {
+				if (la.size() <= 3 || ln.size() <= 3) {
 
-					mMap.addMarker(new MarkerOptions().position(arg).title(
-							String.valueOf(arg.latitude) + ", "
-									+ String.valueOf(arg.longitude)));
+					mMap.addMarker(new MarkerOptions().position(arg));
 
 					la.add(Double.parseDouble(String.valueOf(arg.latitude)));
 					ln.add(Double.parseDouble(String.valueOf(arg.longitude)));
@@ -100,22 +105,40 @@ public class MainActivity extends FragmentActivity {
 							Toast.LENGTH_SHORT).show();
 				}
 
-
+				Log.d("Log",la.size()+" "+ln.size());
 			}
 		});
 
-		/*
-		 * mMap.setOnMarkerClickListener(new OnMarkerClickListener() { public
-		 * boolean onMarkerClick(Marker args) {
-		 * 
-		 * String id = String.valueOf(args.getId()); if (id.equals("m0")) {
-		 * Toast.makeText(MainActivity.this, "Can not remove",
-		 * Toast.LENGTH_SHORT).show(); } else { args.remove();
-		 * Toast.makeText(MainActivity.this, "Remove "+id,
-		 * Toast.LENGTH_SHORT).show(); }
-		 * 
-		 * return true; } });
-		 */
+		// ------Remove Mark----
+		 mMap.setOnMarkerClickListener(new OnMarkerClickListener() { public
+		 boolean onMarkerClick(Marker args) {
+		 
+		 String id = String.valueOf(args.getId()); 
+		 if (id.equals("m0")) {
+			 Toast.makeText(MainActivity.this, "Current position. Can't remove",
+			 Toast.LENGTH_SHORT).show(); 
+		 } 
+		 else { args.remove();
+		 
+		 	 final double _lat = args.getPosition().latitude;
+		 	 //Log.d("Log",String.valueOf(_lat)+" "+String.valueOf(_lng));
+		 	 
+		 	for (int j = 0; j < la.size(); j++) {
+		 	    
+		 	    if(_lat == la.get(j)){
+		 	    	la.remove(la.get(j));
+		 	    	ln.remove(ln.get(j));
+		 	    }
+		 	}
+		 	
+		 	Log.d("Log",la.size()+" "+ln.size());
+		 	 	 	 
+		 	 Toast.makeText(MainActivity.this, "Remove",
+	   	     Toast.LENGTH_SHORT).show(); 
+		 }
+		  
+		 return true; } });
+		 
 
 	}
 
@@ -224,7 +247,7 @@ public class MainActivity extends FragmentActivity {
 
 	}
 	
-	private class ProgressTask2 extends AsyncTask<String, Void, Boolean> {
+	/*private class ProgressTask2 extends AsyncTask<String, Void, Boolean> {
 		private ProgressDialog dialog;
 
 		protected void onPreExecute() {
@@ -256,5 +279,5 @@ public class MainActivity extends FragmentActivity {
 
 		}
 
-	}
+	}*/
 }
