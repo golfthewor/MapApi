@@ -31,19 +31,7 @@ public class GMapV2Direction {
                 + "&destination=" + end.latitude + "," + end.longitude 
                 + "&sensor=false"
                 + "&units=metric"
-                + "&mode="+mode+"+";
-    	
-    	/*String url = "https://maps.googleapis.com/maps/api/directions/xml?"
-    					+ "origin="+pos1.latitude+ "," + pos1.longitude
-						+ "&destination="+pos6.latitude + "," + pos6.longitude
-						+ "&waypoints="+pos2.latitude + "," + pos2.longitude
-						+ "|"+pos3.latitude + "," + pos3.longitude
-						+ "|"+pos4.latitude + "," + pos4.longitude
-						+ "|"+pos5.latitude + "," + pos5.longitude
-						+ "&sensor=false"
-						+ "&units=metric"
-						+ "&mode=driving";*/
-    	
+                + "&mode="+mode+"+"; 	
   
         try {
             HttpClient httpClient = new DefaultHttpClient();

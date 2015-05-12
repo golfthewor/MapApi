@@ -247,37 +247,4 @@ public class MainActivity extends FragmentActivity {
 
 	}
 	
-	/*private class ProgressTask2 extends AsyncTask<String, Void, Boolean> {
-		private ProgressDialog dialog;
-
-		protected void onPreExecute() {
-			dialog = ProgressDialog.show(MainActivity.this, "", "Loading...");
-		}
-
-		@Override
-		protected void onPostExecute(final Boolean success) {
-
-			if (dialog.isShowing()) {
-				dialog.dismiss();
-			}
-			if (success) {
-				Log.d("Log", "Complete wait");
-			} else {
-			}
-		}
-
-		@Override
-		protected Boolean doInBackground(final String... args) {
-
-			try {
-				Thread.sleep(5000);
-			} catch (Exception e) {
-				return false;
-			}
-
-			return true;
-
-		}
-
-	}*/
 }

@@ -1,5 +1,6 @@
 package com.example.mapapi;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
@@ -43,14 +44,19 @@ public class Distance extends FragmentActivity {
 	LatLng position2 = null;
 	LatLng position3 = null;
 	LatLng position4 = null;
-	//LatLng position5 = null;
-	//LatLng position6 = null;
 	
-	Document doc1 = null;
-	Document doc2 = null;
-	Document doc3 = null;
-	//Document doc4 = null;
-	//Document doc5 = null;
+	Document doc12 = null;
+	Document doc13 = null;
+	Document doc23 = null;
+	Document doc32 = null;
+	Document doc14 = null;
+	Document doc24 = null;
+	Document doc34 = null;
+	Document doc42 = null;
+	Document doc43 = null;
+	
+	String pattern = "##0.00";
+	DecimalFormat df = new DecimalFormat(pattern);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +78,6 @@ public class Distance extends FragmentActivity {
 				position4 = new LatLng(la.get(3), ln.get(3));
 				Log.d("Log","position4 created");
 			}
-			/*if(la.size() >= 5){
-				position5 = new LatLng(la.get(4), ln.get(4));
-				Log.d("Log","position5 created");
-			}
-			if(la.size() == 6){
-				position6 = new LatLng(la.get(5), ln.get(5));
-				Log.d("Log","position6 created");
-			}*/
 		
 
 		mMap = ((SupportMapFragment) getSupportFragmentManager()
@@ -93,17 +91,25 @@ public class Distance extends FragmentActivity {
 	@SuppressWarnings("unchecked")
 	public void generate() {
 		
-		int distance_value1 = 0;
-		int distance_value2 = 0;
-		int distance_value3 = 0;
-		int distance_value4 = 0;
-		int distance_value5 = 0;
+		double dt12 = 0;
+		double dt13 = 0;
+		double dt23 = 0;
+		double dt32 = 0;
+		double dt14 = 0;
+		double dt24 = 0;
+		double dt34 = 0;
+		double dt42 = 0;
+		double dt43 = 0;
 		
-		int duration_value1 = 0;
-		int duration_value2 = 0;
-		int duration_value3 = 0;
-		int duration_value4 = 0;
-		int duration_value5 = 0;
+		double dr12 = 0;
+		double dr13 = 0;
+		double dr23 = 0;
+		double dr32 = 0;
+		double dr14 = 0;
+		double dr24 = 0;
+		double dr34 = 0;
+		double dr42 = 0;
+		double dr43 = 0;
 		
 		if (android.os.Build.VERSION.SDK_INT > 9) {
 			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
@@ -124,83 +130,309 @@ public class Distance extends FragmentActivity {
 		if(position4 != null){
 			mMap.addMarker(new MarkerOptions().position(position4));
 		}
-		/*if(position5 != null){
-			mMap.addMarker(new MarkerOptions().position(position5));
-		}
-		if(position6 != null){
-			mMap.addMarker(new MarkerOptions().position(position6));
-		}*/
 		
-		//-----Call direction------
-		doc1 = md.getDocument(position1, position2, mode);
-		if(position3 != null){
-			doc2 = md.getDocument(position2, position3, mode);
-		}
-		if(position4 != null){
-			doc3 = md.getDocument(position3, position4, mode);
-		}
-		/*if(position5 != null){
-			doc4 = md.getDocument(position4, position5, mode);
-		}
-		if(position6 != null){
-			doc5 = md.getDocument(position5, position6, mode);
-		}*/
+		//----Gen direction-----
+		if(la.size() == 2){
+			doc12 = md.getDocument(position1, position2, mode);
+			ArrayList<LatLng> directionPoint1 = md.getDirection(doc12);
+			PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+			for (int i = 0; i < directionPoint1.size(); i++) {
+				rectLine1.add(directionPoint1.get(i));
+			}	
+			mMap.addPolyline(rectLine1);
+			dt12 = md.getDistanceValue(doc12);
+			dr12 = md.getDurationValue(doc12);
 			
-		//-----Gen direction------
-		ArrayList<LatLng> directionPoint1 = md.getDirection(doc1);
-		PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
-		for (int i = 0; i < directionPoint1.size(); i++) {
-			rectLine1.add(directionPoint1.get(i));
-		}	
-		mMap.addPolyline(rectLine1);
-		distance_value1 = md.getDistanceValue(doc1);
-		duration_value1 = md.getDurationValue(doc1);
-		
-		if(doc2 != null){
-			ArrayList<LatLng> directionPoint2 = md.getDirection(doc2);
-			PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
-			for (int i = 0; i < directionPoint2.size(); i++) {
-				rectLine2.add(directionPoint2.get(i));
-			}	
-			mMap.addPolyline(rectLine2);
-			distance_value2 = md.getDistanceValue(doc2);
-			duration_value2 = md.getDurationValue(doc2);
-		}
-		if(doc3 != null){
-			ArrayList<LatLng> directionPoint3 = md.getDirection(doc3);
-			PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
-			for (int i = 0; i < directionPoint3.size(); i++) {
-				rectLine3.add(directionPoint3.get(i));
-			}	
-			mMap.addPolyline(rectLine3);
-			distance_value3 = md.getDistanceValue(doc3);
-			duration_value3 = md.getDurationValue(doc3);
-		}
-		/*if(doc4 != null){
-			ArrayList<LatLng> directionPoint4 = md.getDirection(doc4);
-			PolylineOptions rectLine4 = new PolylineOptions().width(8).color(Color.RED);
-			for (int i = 0; i < directionPoint4.size(); i++) {
-				rectLine4.add(directionPoint4.get(i));
-			}	
-			mMap.addPolyline(rectLine4);
-			distance_value4 = md.getDistanceValue(doc4);
-			duration_value4 = md.getDurationValue(doc4);
-		}
-		if(doc5 != null){
-			ArrayList<LatLng> directionPoint5 = md.getDirection(doc5);
-			PolylineOptions rectLine5 = new PolylineOptions().width(8).color(Color.RED);
-			for (int i = 0; i < directionPoint5.size(); i++) {
-				rectLine5.add(directionPoint5.get(i));
-			}	
-			mMap.addPolyline(rectLine5);
-			distance_value5 = md.getDistanceValue(doc5);
-			duration_value5 = md.getDurationValue(doc5);
-		}*/
-		
-		Log.d("Log", "Distance value: "+distance_value1+distance_value2
-				+distance_value3+distance_value4+distance_value5);
-		Log.d("Log", "Duration value: "+duration_value1+duration_value2
-				+duration_value3+duration_value4+duration_value5);
+			String dt_text = String.valueOf(df.format(dt12/1000));
+			String dr_text = String.valueOf(df.format((dr12/60)/60));
+			
+			Log.d("Log", "Distance value: "+dt12);
+			Log.d("Log", "Distance text: "+dt_text+" km");
+			Log.d("Log", "Duration text: "+dr_text+" hr");
+			
+			Log.d("Log", "Distance: 1-2 ");
+			
+		}else if(la.size() == 3){
+			doc12 = md.getDocument(position1, position2, mode);
+			doc13 = md.getDocument(position1, position3, mode);
+			doc23 = md.getDocument(position2, position3, mode);
+			doc32 = md.getDocument(position3, position2, mode);
+			
+			dt12 = md.getDistanceValue(doc12);
+			dt13 = md.getDistanceValue(doc13);
+			dt23 = md.getDistanceValue(doc23);
+			dt32 = md.getDistanceValue(doc32);
+			
+			dr12 = md.getDurationValue(doc12);
+			dr13 = md.getDurationValue(doc13);
+			dr23 = md.getDurationValue(doc23);
+			dr32 = md.getDurationValue(doc32);
+			
+			if(dt12 <= dt13){
+				ArrayList<LatLng> directionPoint1 = md.getDirection(doc12);
+				PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+				for (int i = 0; i < directionPoint1.size(); i++) {
+					rectLine1.add(directionPoint1.get(i));
+				}	
+				mMap.addPolyline(rectLine1);
+				
+				ArrayList<LatLng> directionPoint2 = md.getDirection(doc23);
+				PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+				for (int i = 0; i < directionPoint2.size(); i++) {
+					rectLine2.add(directionPoint2.get(i));
+				}	
+				mMap.addPolyline(rectLine2);
+				
+				String dt_text = String.valueOf(df.format((dt12+dt23)/1000));
+				String dr_text = String.valueOf(df.format(((dr12+dr23)/60)/60));
+				
+				Log.d("Log", "Distance value: "+dt12+dt23);
+				Log.d("Log", "Distance text: "+dt_text+" km");
+				Log.d("Log", "Duration text: "+dr_text+" hr");
+				
+				Log.d("Log", "Distance: 1-2-3 ");
+				
+				
+			}else{
+				ArrayList<LatLng> directionPoint1 = md.getDirection(doc13);
+				PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+				for (int i = 0; i < directionPoint1.size(); i++) {
+					rectLine1.add(directionPoint1.get(i));
+				}	
+				mMap.addPolyline(rectLine1);
+				
+				ArrayList<LatLng> directionPoint2 = md.getDirection(doc32);
+				PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+				for (int i = 0; i < directionPoint2.size(); i++) {
+					rectLine2.add(directionPoint2.get(i));
+				}	
+				mMap.addPolyline(rectLine2);
+				
+				String dt_text = String.valueOf(df.format((dt13+dt32)/1000));
+				String dr_text = String.valueOf(df.format(((dr13+dr32)/60)/60));
+				
+				Log.d("Log", "Distance value: "+dt13+dt32);
+				Log.d("Log", "Distance text: "+dt_text+" km");
+				Log.d("Log", "Duration text: "+dr_text+" hr");
+				
+				Log.d("Log", "Distance: 1-3-2 ");
+				
+			}
+			
+		}else if(la.size() == 4){
+			doc12 = md.getDocument(position1, position2, mode);
+			doc13 = md.getDocument(position1, position3, mode);
+			doc14 = md.getDocument(position1, position4, mode);
+			doc23 = md.getDocument(position2, position3, mode);
+			doc24 = md.getDocument(position2, position4, mode);
+			doc32 = md.getDocument(position3, position2, mode);
+			doc34 = md.getDocument(position3, position4, mode);
+			doc42 = md.getDocument(position4, position2, mode);
+			doc43 = md.getDocument(position4, position3, mode);
+			
+			dt12 = md.getDistanceValue(doc12);
+			dt13 = md.getDistanceValue(doc13);
+			dt14 = md.getDistanceValue(doc14);
+			dt23 = md.getDistanceValue(doc23);
+			dt24 = md.getDistanceValue(doc24);
+			dt32 = md.getDistanceValue(doc32);
+			dt34 = md.getDistanceValue(doc34);
+			dt42 = md.getDistanceValue(doc42);
+			dt43 = md.getDistanceValue(doc43);
+			
+			dr12 = md.getDurationValue(doc12);
+			dr13 = md.getDurationValue(doc13);
+			dr14 = md.getDurationValue(doc14);
+			dr23 = md.getDurationValue(doc23);
+			dr24 = md.getDurationValue(doc24);
+			dr32 = md.getDurationValue(doc32);
+			dr34 = md.getDurationValue(doc34);
+			dr42 = md.getDurationValue(doc42);
+			dr43 = md.getDurationValue(doc43);
+			
+			if(dt12 <= dt13 && dt12 <= dt14){
+				ArrayList<LatLng> directionPoint1 = md.getDirection(doc12);
+				PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+				for (int i = 0; i < directionPoint1.size(); i++) {
+					rectLine1.add(directionPoint1.get(i));
+				}	
+				mMap.addPolyline(rectLine1);
+				
+				if(dt23 <= dt24){
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc23);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc34);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+					
+					String dt_text = String.valueOf(df.format((dt12+dt23+dt34)/1000));
+					String dr_text = String.valueOf(df.format(((dr12+dr23+dr34)/60)/60));
+					
+					Log.d("Log", "Distance value: "+dt12+dt23+dt34);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+					
+					Log.d("Log", "Distance: 1-2-3-4 ");
+					
+					
+				}else{
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc24);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc43);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+					
+					String dt_text = String.valueOf(df.format((dt12+dt24+dt43)/1000));
+					String dr_text = String.valueOf(df.format(((dr12+dr24+dr43)/60)/60));
+					
+					Log.d("Log", "Distance value: "+dt12+dt24+dt43);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+				
+					Log.d("Log", "Distance: 1-2-4-3 ");
+					
+				
+				}
+				
+			}else if(dt13 < dt12 && dt13 <= dt14){
+				ArrayList<LatLng> directionPoint1 = md.getDirection(doc13);
+				PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+				for (int i = 0; i < directionPoint1.size(); i++) {
+					rectLine1.add(directionPoint1.get(i));
+				}	
+				mMap.addPolyline(rectLine1);
+				
+				if(dt32 <= dt34){
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc32);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc24);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+					
+					String dt_text = String.valueOf(df.format((dt13+dt32+dt24)/1000));
+					String dr_text = String.valueOf(df.format(((dr13+dr32+dr24)/60)/60));
+					
+					Log.d("Log", "Distance value: "+dt13+dt32+dt24);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+					
+					Log.d("Log", "Distance: 1-3-2-4 ");
+					
+					
+				}else{
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc34);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc42);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+				
+					String dt_text = String.valueOf(df.format((dt13+dt34+dt42)/1000));
+					String dr_text = String.valueOf(df.format(((dr13+dr34+dr42)/60)));
+					
+					Log.d("Log", "Distance value: "+dt13+dt34+dt42);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+					
+					Log.d("Log", "Distance: 1-3-4-2 ");
+					
+				
+				}
+				
+			}else if(dt14 < dt12 && dt14 < dt13){
+				ArrayList<LatLng> directionPoint1 = md.getDirection(doc14);
+				PolylineOptions rectLine1 = new PolylineOptions().width(8).color(Color.RED);
+				for (int i = 0; i < directionPoint1.size(); i++) {
+					rectLine1.add(directionPoint1.get(i));
+				}	
+				mMap.addPolyline(rectLine1);
+				
+				if(dt42 <= dt43){
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc42);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc23);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+					
+					String dt_text = String.valueOf(df.format((dt14+dt42+dt23)/1000));
+					String dr_text = String.valueOf(df.format(((dr14+dr42+dr23)/60)/60));
+					
+					Log.d("Log", "Distance value: "+dt14+dt42+dt23);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+					
+					Log.d("Log", "Distance: 1-4-2-3 ");
+					
+					
+				}else{
+					ArrayList<LatLng> directionPoint2 = md.getDirection(doc43);
+					PolylineOptions rectLine2 = new PolylineOptions().width(8).color(Color.GREEN);
+					for (int i = 0; i < directionPoint2.size(); i++) {
+						rectLine2.add(directionPoint2.get(i));
+					}	
+					mMap.addPolyline(rectLine2);
+					
+					ArrayList<LatLng> directionPoint3 = md.getDirection(doc32);
+					PolylineOptions rectLine3 = new PolylineOptions().width(8).color(Color.BLUE);
+					for (int i = 0; i < directionPoint3.size(); i++) {
+						rectLine3.add(directionPoint3.get(i));
+					}	
+					mMap.addPolyline(rectLine3);
+					
+					String dt_text = String.valueOf(df.format((dt14+dt43+dt32)/1000));
+					String dr_text = String.valueOf(df.format(((dr14+dr43+dr32)/60)/60));
+					
+					Log.d("Log", "Distance value: "+dt14+dt43+dt32);
+					Log.d("Log", "Distance text: "+dt_text+" km");
+					Log.d("Log", "Duration text: "+dr_text+" hr");
+				
+					Log.d("Log", "Distance: 1-4-3-2 ");
+					
+				
+				}
+				
+			}
+			
+		}		
 	}
 
 	LocationListener listener = new LocationListener() {
